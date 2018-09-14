@@ -1,27 +1,34 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
 
 int menu(){
 	string command;
-	string insert = "insert";
 
-    getline(cin, command);
+    while (true) {
+        getline(cin, command);
 
-    if(command.substr(0,6) == "insert") {
-        if (command.substr(6, 9) == "end") {
-            cout << "insert end thing method" << endl;
-            return 1;
+        if (command.find("insert") != string::npos) {
+            cout << "ok";
+            if (command.find("end") != string::npos) {
+                cout << "insert end thing method" << endl;
+
+                return 1;
+            }
+
+            else if (any_of(command.begin(), command.end(), :: isdigit)) { //any_of uses algorithm lib
+                cout << "insert at line number method" << endl;
+                return 2;
+            }
+            else {
+                cout << "Invalid command, please try again." << endl;
+
+            }
+
         }
-        //space before the line number
-
-        if (isdigit(command[7])){
-            cout << "insert at line number method" << endl;
-            return 2;
-        }
-
     }
 
 }
