@@ -1,4 +1,3 @@
-#include "LineEditorHeader.h"
 #include <iostream>
 #include <string>
 
@@ -6,9 +5,10 @@ using namespace std;
 
 
 int menu(){
-    char command[40];
-    cin >> command;
+	string command;
+	string insert = "insert";
 
+    getline(cin, command);
 
     if(command.substr(0,6) == "insert") {
         if (command.substr(6, 9) == "end") {
