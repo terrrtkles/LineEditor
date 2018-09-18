@@ -11,11 +11,74 @@ struct Node {
 }
 //insert text at end of linked list
 void insertEnd(string text){
+    Node* tail = new Node;
 
+    tail->data = text;
+    tail->next = NULL;
+
+    //if the linked list is empty, then the last is the head
+    if (head == NULL){
+        head = tail;
+    }
+    else{
+        Node* temp = new Node;
+        temp = head;
+
+        while (temp->next != NULL){
+            temp = temp->next;
+        }
+        temp->next = last; //establishes the actual last node
+    }
 }
 
 void insertAtLine(int lineNum, string text){
+    Node* temp = head;
+    Node* prev = head;
+    //instantiate the begin of the list with 1 and iterate through to the wanted line number
+    while(temp != NULL) {
+        for (int i = 1; i <= lineNum; i++) {
+            if(i == lineNum){
+                temp->data = text;
+                //do the moving nodes thing
+                if(temp == head){
+                    Node* move = NULL;
+                    move->data = text;
+                    move->next = head;
+                    head = move;
+                }
+                else if{temp->next == NULL){ //if line is the tail
+                    Node* lastOfMove = NULL;
+                    Node* tail = head;
+                    lastOfMove->data = text;
+                    lastOfMove->next = NULL; //because it is last node
+                    if(head == NULL){
+                        head = lastOfNode;
+                        return;
+                    }
+                    while(tail->next != NULL){
+                        tail = tail->next;
+                    }
+                    tail->next = lastOfNode;
+                    return;
+                }
+                else{ //when the line is neither the head or tail
+                    Node* moveOver = NULL;
+                    moveOver->data = text;
+                    moveOver->next = prev->next;
+                    prev->next = moveOver;
+                }
+                return;
+            }
+            else{
+                temp = temp->next;
 
+                //when there is a previous that exists aka when temp isn't head
+                if(i >= 2) {
+                    prev = prev->next;
+                }
+            }
+        }
+    }
 }
 
 void deleteAtIndex(int lineNum, string text){
@@ -30,18 +93,16 @@ void deleteAtIndex(int lineNum, string text){
             cout << "This is the last line of text so it cannot be deleted." << endl;
             return;
         }
-
         head->data = head->next->data; //Move the head->next->data to the head->data
 
         temp = head->next; //store address of new next
 
         head->next = head->next->next; //disconnect the old links
-
         return;
     }
 
     // if text is not in head, then find the previous node
-    struct Node *prev = head;
+    Node *prev = head;
     while(prev->next != NULL && prev->next != temp) {
         prev = prev->next;
     }
@@ -51,36 +112,37 @@ void deleteAtIndex(int lineNum, string text){
         printf("Given text does not exist. Please reenter your command.");
         return;
     }
-
     prev->next = prev->next->next; //delete node
-
-    return;
 }
 
 void edit(int lineNum, string text){
     Node* temp = head;
-    //find address of lineNum
 
-    while(head != NULL) {
-        for (int = 1; i < lineNum; i++) {
-            temp = temp->next;
+    //instantiate the begin of the list with 1 and iterate through to the wanted line number
+    while(temp != NULL) {
+        for (int i = 1; i <= lineNum; i++) {
+            if(i == lineNum){
+                temp->data = text;
+                break;
+            }
+            else{
+                temp = temp->next;
+            }
         }
-
     }
-    temp->data = text;
-
 }
 
 void print(){
-    Node* head = head;
+    Node* curr = head;
     int listSize = 1;
-    while(head != NULL){
-        cout << listSize << ". " << head->data << endl;
+    while(curr != NULL){
+        cout << listSize << ". " << curr->data << endl;
         listSize++;
+        curr = curr->next;
     }
 }
 
-void search(){
+void search(int lineNum, string text){
 
 }
 
