@@ -84,36 +84,22 @@ void insertAtLine(int lineNum, string text){
 void deleteAtIndex(int lineNum){
     Node* curr = head;
 
-    for(int i = 1; i <= lineNum; i++) {
-
-        if (i == lineNum) {
-            curr->data = curr->next->data; //Move the head->next->data to the head->data
-
-            temp = curr->next; //store address of new next
-
-            curr->next = curr->next->next; //disconnect the old links
-
-            return;
-        }
-        else{
-
-            curr = curr->next;
-        }
-    }
-}
-
-    // if text is not in head, then find the previous node
-    Node *prev = head;
-    while(prev->next != NULL && prev->next != temp) {
-        prev = prev->next;
-    }
-
-    //checks that there is a previous for any node
-    if(prev->next == NULL) {
-        printf("Given text does not exist. Please reenter your command.");
+    if(head == NULL){
         return;
     }
-    prev->next = prev->next->next; //delete node
+    if(lineNum == 1){
+        head = curr->next;
+        return;
+    }
+    for(int i = 1; curr != NULL && i < lineNum; i++) {
+        curr = curr->next;
+    }
+    if(curr == NULL || curr->next == NULL){
+        return;
+    }
+    Node* temp = curr->next->next;
+    free(curr->next);
+    curr->next = temp;
 }
 
 void edit(int lineNum, string text){
@@ -124,7 +110,7 @@ void edit(int lineNum, string text){
         for (int i = 1; i <= lineNum; i++) {
             if(i == lineNum){
                 temp->data = text;
-                break;
+                return;
             }
             else{
                 temp = temp->next;
@@ -180,7 +166,8 @@ void search(string text){
                 insertEnd(command.substr(firstQuote, secondQuote));
                 cout << "insert end thing method" << endl;
                 return 1;
-            } else if (any_of(command.begin(), command.end(), ::isdigit)) { //any_of uses algorithm lib
+            }
+            else if (any_of(command.begin(), command.end(), ::isdigit)) { //any_of uses algorithm lib
                 //checks for a number
                 string line;
                 size_t found = command.find_first_of("0123456789");
@@ -198,19 +185,43 @@ void search(string text){
                 int secondQuote = command.find(delimiter, firstQuote + 1) //finds the second quotation mark
                 insertAtLine(lineInt, command.substr(firstQuote, secondQuote));
 
-                cout << "insert at line number method" << endl;
-                return 2;
             }
             else {
                 cout << "Invalid command, please try again." << endl;
             }
         }
         else if (command.find("delete") != string::npos) {
-            line = atoi(command);
+            if (any_of(command.begin(), command.end(), ::isdigit)) { //any_of uses algorithm lib
+                //checks for a number
+                string line;
+                size_t found = command.find_first_of("0123456789");
+                while(found != string::npos){
+                    for(int = 0; i < command.length(); i++) {
+                        line[i];
+                        found = command.find_first_of("0123456789", found + 1);
+                    }
+                }
+            int lineInt = atoi(line);
+        }
             deleteAtIndex(lineInt);
         }
         else if (command.find("edit") != string::npos) {
-            edit(lineInt, command.substr(firstQuote, secondQuote));
+        //checks for a number
+                string line;
+                size_t found = command.find_first_of("0123456789");
+                while(found != string::npos){
+                    for(int = 0; i < command.length(); i++) {
+                        line[i];
+                        found = command.find_first_of("0123456789", found + 1);
+                    }
+                }
+
+                int lineInt = atoi(line);
+
+                //text string
+                int firstQuote = command.find(delimiter) //finds the first quotation mark
+                int secondQuote = command.find(delimiter, firstQuote + 1) //finds the second quotation mark
+                edit(lineInt, command.substr(firstQuote, secondQuote));
         }
         else if (command.find("print") != string::npos) {
             print();
