@@ -2,76 +2,80 @@
 #include <string>
 #include <algorithm>
 #include <cstdlib>
+#include <cstring>
 
 using namespace std;
 
 struct Node {
     string data;
-    Node* next;
+    Node* next = nullptr;
 };
+struct Node* head;
 //insert text at end of linked list
-Node* insertEnd(Node* head, string text){
-
+void insertEnd(string text){
     Node* temp = head;
-
     Node* tail = new Node();
 
     tail->data = text;
     tail->next = nullptr;
     //if the linked list is empty, then the last is the head
     if (head == nullptr){
-
         head = tail;
-        cout << "added" << head->data << endl;
-        return head;
+        head->next = nullptr;
+        return;
     }
     else{
-
         while (temp->next != nullptr){
             temp = temp->next;
         }
         temp->next = tail; //establishes the actual last node
-
-        cout << "added as not nulll" << endl;
-
-        return head;
+        return;
     }
 }
 
-Node* insertAtLine(Node* head, int lineNum, string text){
+void insertAtLine(int lineNum, string text){
     Node* temp = head;
     Node* prev = head;
     Node* lastOfMove = new Node();
+
+    //count linked list size
+    int listSize = 0;
+    Node* counting = head;
+    while(counting != nullptr){
+        listSize++;
+        counting = counting->next;
+    }
+
+    if(lineNum > listSize){
+        cout << "The line number does not currently exist in the list." << endl;
+        return;
+    }
+
     lastOfMove->data = text;
     //instantiate the begin of the list with 1 and iterate through to the wanted line number
     while(temp != nullptr) {
+
         for (int i = 1; i <= lineNum; i++) {
-            cout << "going inside loop" << endl;
+
             if(i == lineNum){
                 //do the moving nodes thing
                 if(temp == head){
-
                     lastOfMove->next = head;
                     head = lastOfMove;
-                    cout << "first" << endl;
-                    return head;
+                    return;
                 }
                 else if(temp->next == nullptr){ //if line is the tail
-
+                    Node* temp1 = new Node();
                     Node* tail = head;
-
-                    lastOfMove->next = nullptr; //because it is last node
-                    if(head == nullptr){
-                        head = lastOfMove;
-
-                        return head;
-                    }
+                    //looking for last node it is last node
                     while(tail->next != nullptr){
                         tail = tail->next;
                     }
-                    tail->next = lastOfMove;
-                    cout << "second" << endl;
-                    return head;
+                    temp1->data = tail->data;
+                    temp1->next = nullptr;
+                    tail->next = temp1;
+                    tail->data = text;
+                    return;
                 }
                 else{ //when the line is neither the head or tail
                     Node* moveOver = new Node();
@@ -79,8 +83,7 @@ Node* insertAtLine(Node* head, int lineNum, string text){
                     moveOver->next = prev->next;
                     prev->next = moveOver;
                 }
-                cout << "third" << endl;
-                return head;
+                return;
             }
             else{
                 temp = temp->next;
@@ -92,30 +95,26 @@ Node* insertAtLine(Node* head, int lineNum, string text){
             }
         }
     }
-    return head;
+    cout << "line number does not exist" << endl;
 }
 
-Node* deleteAtIndex(Node* head, int lineNum){
+void deleteAtIndex(int lineNum){
     Node* curr = head;
-
-    if(head == nullptr){
-        return head;
+    if(lineNum == 1){ //if its the first line, then reassigned the head
+        head = curr->next;
+        free(curr);
+        return;
     }
-    for(int i = 0; curr != nullptr && i < lineNum; i++) {
+    for(int i = 0; i < lineNum - 2; i++){ //find the line
         curr = curr->next;
-        cout << "found it" << endl;
     }
-    if(curr == nullptr || curr->next == nullptr){
-        return head;
-    }
-    Node* temp = curr->next->next;
-    free(curr->next); //delete node
-    curr->next = temp;
-    cout << "transfer complete" << endl;
-    return head;
+    //remove the node
+    Node* temp = curr->next;
+    curr->next = temp->next;
+    free(temp);
 }
 
-void edit(Node* head, int lineNum, string text){
+void edit(int lineNum, string text){
     Node* temp = head;
 
     //instantiate the begin of the list with 1 and iterate through to the wanted line number
@@ -132,24 +131,23 @@ void edit(Node* head, int lineNum, string text){
     }
 }
 
-void print(Node* head){
+void print(){
     Node* curr = head;
     int listSize = 1;
 
         while (curr != nullptr) {
-            cout << listSize << ". " << curr->data << endl;
+            cout << listSize << " " << curr->data << endl;
             listSize++;
-            curr = curr->next;
-            if(curr == nullptr){
+            if(curr->next == nullptr){
                 return;
             }
+            curr = curr->next;
         }
 
         cout << "list is empty" << endl;
-
 }
 
-void search(Node* head, string text){
+void search(string text){
 
     Node* curr = head;
     int listSize = 1;
@@ -159,7 +157,7 @@ void search(Node* head, string text){
             free(curr);
             return;
         }
-        else if (curr->data == text) {
+        else if (curr->data.find(text) != string::npos) {
             cout << listSize << " " << text << endl;
             free(curr);
             return;
@@ -172,102 +170,94 @@ void search(Node* head, string text){
 }
 
 int main(){
-    int choice = 0;
-    Node* head = nullptr;
-    while(choice != 7) {
+    bool choice = false;
+    head = nullptr;
+    while(!choice) {
         string command;
-
-        string delimiter = "\"";
+        char delimiter = '\"';
         string textEnd;
+        char space = ' ';
 
         getline(cin, command);
 
-        //check string size
 
-        if (command.find("insert") != string::npos) {
+        unsigned int firstQuote = command.find(delimiter); //finds the first quotation mark
+        unsigned int secondQuote = command.find(delimiter, firstQuote + 1); //finds the second quotation mark
+        unsigned int commandLength = secondQuote - firstQuote - 1;
+        string text = command.substr(firstQuote + 1, commandLength);
+        cout << "text everything command: " << text << endl;
+        //check string size
+        if(text.length() > 80){
+            cout << "text is more than 80 characters" << endl;
+
+        }
+        else if (command.find("insert") != string::npos) {
             if (command.find("End") != string::npos) {
-                //parse string for the text
-                unsigned int firstQuote = command.find(delimiter); //finds the first quotation mark
-                unsigned int secondQuote = command.find(delimiter, firstQuote + 1); //finds the second quotation mark
-                cout << command.substr(firstQuote, secondQuote) << " is read" << endl;
-                head = insertEnd(head, command.substr(firstQuote, secondQuote));
-                choice = 1;
-                cout << "insert end works" << endl;
+
+                insertEnd(text);
 
             }
                 //insert at line
             else if (any_of(command.begin(), command.end(), ::isdigit)) { //any_of uses algorithm lib
                 //checks for a number
-                string line;
-                size_t found = command.find_first_of("0123456789");
-                while (found != string::npos) {
-                    for (int i = 0; i < 2; i++) {
-                        line[i] = command[found];
-                        found = command.find_first_of("0123456789", found + 1);
-                    }
-                }
+                size_t pos = command.find(space);
 
-                int lineInt = stoi(line);
+                string num;
+                num = command.substr(0,pos);
+                command.erase(0, pos + 1); //removes the command word
+                num = command.substr(0,pos); //retrieves the line number
 
-                //text string
-                unsigned int firstQuote = command.find(delimiter); //finds the first quotation mark
-                unsigned int secondQuote = command.find(delimiter, firstQuote + 1); //finds the second quotation mark
-                head = insertAtLine(head, lineInt, command.substr(firstQuote, secondQuote));
-                choice = 2;
-                cout << "insert at line works" << endl;
+                int lineInt = stoi(num);
+
+                insertAtLine(lineInt, text);
+
             } else {
                 cout << "Invalid insert command" << endl;
             }
-        } else if (command.find("delete") != string::npos) {
+        }
+        else if (command.find("delete") != string::npos) {
             if (any_of(command.begin(), command.end(), ::isdigit)) { //any_of uses algorithm lib
                 //checks for a number
-                cout << "delete dloop" << endl;
-                string line;
-                unsigned int found = command.find_first_of("0123456789");
-                //FIX FIND THE NUMBER
-                cout << found << endl;
-                line.at(0) = command.at(found);
-                if (any_of(command.begin() + found, command.end(), ::isdigit)){
-                    found = command.find_first_of("0123456789");
-                    line.at(1) = command.at(found);
-                }
-                cout << line << endl;
-                int lineInt = stoi(line);
-                cout << lineInt << "caught" << endl;
-                head = deleteAtIndex(head, lineInt);
-                choice = 3;
+
+                size_t pos = command.find(space);
+                string num;
+
+                num = command.substr(0,pos);
+                command.erase(0, pos + 1); //removes the command word
+                num = command.substr(0,pos); //retrieves the line number
+
+                int lineInt = stoi(num);
+                deleteAtIndex(lineInt);
+
             }
-        } else if (command.find("edit") != string::npos) {
+        }
+        else if (command.find("edit") != string::npos) {
             //checks for a number
-            string line;
-            size_t found = command.find_first_of("0123456789");
 
-            while (found != string::npos) { //when are are still numbers
-                for (int i = 0; i < 2; i++) {
-                    line[i] = command[found];
-                    found = command.find_first_of("0123456789", found + 1);
+            size_t pos = command.find(space);
+            string num;
 
-                }
-            }
+            num = command.substr(0,pos);
+            command.erase(0, pos + 1); //removes the command word
+            num = command.substr(0,pos); //retrieves the line number
 
-            int lineInt = stoi(line);
+            int lineInt = stoi(num);
 
-            //text string
-            unsigned int firstQuote = command.find(delimiter); //finds the first quotation mark
-            unsigned int secondQuote = command.find(delimiter, firstQuote + 1); //finds the second quotation mark
-            edit(head, lineInt, command.substr(firstQuote, secondQuote));
-            choice = 4;
-        } else if (command.find("print") != string::npos) {
-            print(head);
-            choice = 5;
-        } else if (command.find("search") != string::npos) {
-            unsigned int firstQuote = command.find(delimiter); //finds the first quotation mark
-            unsigned int secondQuote = command.find(delimiter, firstQuote + 1); //finds the second quotation mark
-            search(head, command.substr(firstQuote, secondQuote));
-            choice = 6;
-        } else if (command.find("quit") != string::npos) {
-            choice = 7;
-        } else {
+            edit(lineInt, text);
+        }
+        else if (command.find("print") != string::npos) {
+            print();
+
+        }
+        else if (command.find("search") != string::npos) {
+
+            search(text);
+
+        }
+        else if (command.find("quit") != string::npos) {
+            choice = true;
+        }
+        else {
             cout << "Invalid command, please try again." << endl;
         }
     }
