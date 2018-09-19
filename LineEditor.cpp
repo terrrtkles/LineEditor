@@ -81,25 +81,26 @@ void insertAtLine(int lineNum, string text){
     }
 }
 
-void deleteAtIndex(int lineNum, string text){
-    Node* head = head;
-    Node* temp = NULL;
-    //set temp's data to the text that wants to be deleted
-    temp->data = text;
+void deleteAtIndex(int lineNum){
+    Node* curr = head;
 
-    //if text is found in head
-    if(head->data == temp) {
-        if(head->next == NULL) {
-            cout << "This is the last line of text so it cannot be deleted." << endl;
+    for(int i = 1; i <= lineNum; i++) {
+
+        if (i == lineNum) {
+            curr->data = curr->next->data; //Move the head->next->data to the head->data
+
+            temp = curr->next; //store address of new next
+
+            curr->next = curr->next->next; //disconnect the old links
+
             return;
         }
-        head->data = head->next->data; //Move the head->next->data to the head->data
+        else{
 
-        temp = head->next; //store address of new next
-
-        head->next = head->next->next; //disconnect the old links
-        return;
+            curr = curr->next;
+        }
     }
+}
 
     // if text is not in head, then find the previous node
     Node *prev = head;
@@ -142,8 +143,23 @@ void print(){
     }
 }
 
-void search(int lineNum, string text){
-
+void search(string text){
+    Node* curr = head;
+    int listSize = 1;
+    for(int i = 0; i < listSize; i++) {
+        if(curr == NULL){
+            cout << "text does not exist" << endl;
+            return;
+        }
+        else if (curr->data == text) {
+            cout << listSize << " " << text << endl;
+            return;
+        }
+        else{
+            curr = curr->next;
+            listSize++;
+        }
+    }
 }
 
 /*int menu() {
@@ -191,17 +207,18 @@ void search(int lineNum, string text){
         }
         else if (command.find("delete") != string::npos) {
             line = atoi(command);
-            //deleteAtIndex();
-            return 3;
+            deleteAtIndex(lineInt);
         }
         else if (command.find("edit") != string::npos) {
-            //edit();
+            edit(lineInt, command.substr(firstQuote, secondQuote));
         }
         else if (command.find("print") != string::npos) {
-            //print();
+            print();
         }
         else if (command.find("search") != string::npos) {
-            //search();
+            int firstQuote = command.find(delimiter) //finds the first quotation mark
+            int secondQuote = command.find(delimiter, firstQuote + 1) //finds the second quotation mark
+            search(command.substr(firstQuote, secondQuote));
         }
         else if (command.find("quit") != string::npos) {
             return 0;
