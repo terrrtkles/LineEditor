@@ -47,8 +47,24 @@ void insertAtLine(int lineNum, string text){
     }
 
     if(lineNum > listSize){
-        cout << "The line number does not currently exist in the list." << endl;
-        return;
+        if(lineNum == listSize + 1){
+
+            Node* tail = head;
+            Node* movedTail = new Node();
+            //looking for last node it is last node
+
+            while(tail->next != nullptr){
+                tail = tail->next;
+            }
+            movedTail->data = text;
+            movedTail->next = nullptr;
+            tail->next = movedTail;
+            return;
+        }
+        else {
+            //cout << "The line number does not currently exist in the list." << endl;
+            return;
+        }
     }
 
     lastOfMove->data = text;
@@ -95,11 +111,24 @@ void insertAtLine(int lineNum, string text){
             }
         }
     }
-    cout << "line number does not exist" << endl;
+    //cout << "line number does not exist" << endl;
 }
 
 void deleteAtIndex(int lineNum){
     Node* curr = head;
+
+    int listSize = 0;
+    Node* counting = head;
+    while(counting != nullptr){
+        listSize++;
+        counting = counting->next;
+    }
+
+    if(lineNum > listSize){
+        //cout << "The line number does not currently exist in the list." << endl;
+        return;
+    }
+
     if(lineNum == 1){ //if its the first line, then reassigned the head
         head = curr->next;
         free(curr);
@@ -144,29 +173,32 @@ void print(){
             curr = curr->next;
         }
 
-        cout << "list is empty" << endl;
+        //cout << "list is empty" << endl;
 }
 
 void search(string text){
 
     Node* curr = head;
-    int listSize = 1;
-    for(int i = 0; i < listSize; i++) {
+    int size = 1;
+    for(int i = 0; i < size; i++) {
         if(curr == nullptr){
             cout << "not found" << endl;
             free(curr);
             return;
         }
         else if (curr->data.find(text) != string::npos) {
-            cout << listSize << " " << text << endl;
-            free(curr);
-            return;
+            cout << size << " " << curr->data << endl;
+            if(curr->next != nullptr) {
+                curr = curr->next;
+                size++;
+            }
         }
         else{
             curr = curr->next;
-            listSize++;
+            size++;
         }
     }
+
 }
 
 int main(){
@@ -185,10 +217,9 @@ int main(){
         unsigned int secondQuote = command.find(delimiter, firstQuote + 1); //finds the second quotation mark
         unsigned int commandLength = secondQuote - firstQuote - 1;
         string text = command.substr(firstQuote + 1, commandLength);
-        cout << "text everything command: " << text << endl;
         //check string size
         if(text.length() > 80){
-            cout << "text is more than 80 characters" << endl;
+            //cout << "text is more than 80 characters" << endl;
 
         }
         else if (command.find("insert") != string::npos) {
@@ -212,7 +243,7 @@ int main(){
                 insertAtLine(lineInt, text);
 
             } else {
-                cout << "Invalid insert command" << endl;
+                //cout << "Invalid insert command" << endl;
             }
         }
         else if (command.find("delete") != string::npos) {
@@ -258,7 +289,7 @@ int main(){
             choice = true;
         }
         else {
-            cout << "Invalid command, please try again." << endl;
+            //cout << "Invalid command, please try again." << endl;
         }
     }
 
